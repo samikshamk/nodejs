@@ -61,6 +61,40 @@ app.get("/posts", async (req, res) => {
     }
   });
 
+  app.get("/comment/:search", (req, res) => {
+    try {
+      const search = req.params.search;
+      
+      request(
+        {
+          url: "https://jsonplaceholder.typicode.com/comments",
+          json: true,
+        },
+        (error, response, body) => {
+          if (!error && response.statusCode == 200) {
+            const allCommentData = body;
+  
+            let getFilteredData = _.filter(
+              allCommentData,
+              function (filteredData) {
+                return (
+                  filteredData.postId == search ||
+                  filteredData.id == search ||
+                  _.includes(filteredData.name, search) ||
+                  _.includes(filteredData.email, search) ||
+                  _.includes(filteredData.name, body)
+                );
+              }
+            );
+            res.send(getFilteredData);
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  });
+
 
 app.get("/", (req, res) => {
     res.send("Assessment by TribeHired");
